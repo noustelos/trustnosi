@@ -8,11 +8,64 @@ reading.
 - Repo: https://github.com/noustelos/trustnosi
 - Live: https://trustno.si/ (Cloudflare Pages, git-connected to `main`)
 
-## Deploy
+## Deploy & infrastructure
 
-**Pushing to `main` is a production deploy.** Cloudflare Pages builds from
-`main` with no build command and output directory `/`. Work on a branch, get
-Nick's review, then merge.
+> ⚠️ **A push to `main` is instantly live on trustno.si.** There is no staging
+> step and no build to fail first. Work on a branch, merge deliberately, then
+> open the live site and check it.
+
+**Repo** — https://github.com/noustelos/trustnosi, branch `main`.
+
+**Cloudflare Pages** — project `trustnosi`, on Avatar68@gmail.com's Account.
+Git-connected to `main`. Framework preset **None**, no build command, output
+directory `/`.
+
+**Domains** — all three serve the same Pages project:
+
+| | |
+|---|---|
+| https://trustno.si | primary |
+| https://www.trustno.si | custom domain, redirected to the root |
+| https://trustnosi.pages.dev | Pages default |
+
+**Redirect** — a Cloudflare Single Redirect rule, "Redirect from WWW to root":
+`https://www.*` → `https://${1}`, **301**. The `<link rel="canonical">` in
+`<head>` is `https://trustno.si/`. If the redirect target ever changes, change
+the canonical with it — a canonical pointing at a URL that 301s elsewhere is a
+bad signal.
+
+**DNS** — zone `trustno.si` on Cloudflare (nameservers delegated from
+Namecheap):
+
+| type | name | value | |
+|---|---|---|---|
+| CNAME | `@` | `trustnosi.pages.dev` | proxied |
+| CNAME | `www` | `trustnosi.pages.dev` | proxied |
+| TXT | `@` | marketplace ownership verification | Sedo |
+| TXT | `@` | marketplace ownership verification | Afternic |
+
+> ⚠️ **Never delete the two TXT records while the domain is listed.** They are
+> what proves ownership to Sedo and Afternic; removing one can delist the
+> domain. They look like clutter at `@`. They are not.
+
+**Registrar** — Namecheap. Domain bought November 2026.
+
+**Marketplace listings** — both live, Buy Now **$1,490 USD**:
+
+- Afternic — https://www.afternic.com/domain/trustno.si
+- Sedo — https://sedo.com/search/details/?domain=trustno.si
+
+The price on the page must match both listings. If it changes on the
+marketplaces, update the page in the same session — see **Links** for the
+three files that carry it.
+
+**Contact** — `info@noustelos.gr`, and only that. Never an `@trustno.si`
+address: that is the domain being sold, and a buyer may take it over.
+
+**Rollback** — either revert the commit and push, or Cloudflare dashboard →
+Pages → `trustnosi` → Deployments → roll back to a previous deployment. The
+dashboard route is faster when the live site is broken; the revert is the one
+that keeps git honest, so do that too.
 
 ## Stack
 
@@ -131,24 +184,23 @@ not.
 
 ## Links
 
-The domain is listed Buy Now on two marketplaces. Both URLs live as
-`AFTERNIC_URL` / `SEDO_URL` constants at the top of the script, and as real
-`href`s on the anchors so the page works without JS — change both places.
+The marketplace URLs themselves are in **Deploy & infrastructure**. What
+matters here is that each one lives in *two* places in `index.html`: as an
+`AFTERNIC_URL` / `SEDO_URL` constant at the top of the script, and as a real
+`href` on the anchor so the page still works without JS. Change both.
 
-- Afternic (primary, `--signal` button) —
-  https://www.afternic.com/domain/trustno.si
-- Sedo (outline button) —
-  https://sedo.com/search/details/?domain=trustno.si
-- Both open in a new tab (`target="_blank" rel="noopener"`).
-- "Make an offer" → `mailto:info@noustelos.gr`
-- Credit bottom-left → https://noustelos.gr
-- `info@noustelos.gr` is the only email anywhere. Never an `@trustno.si`
-  address — that is the domain being sold.
+The three CTAs in the reveal:
 
-**The price on the page must match both marketplace listings.** It appears in
-three places: the `.price` line in the reveal, `llms.txt`, and this file. If a
-listing's price changes, change all of them in the same commit — and never let
-the two listings disagree with each other.
+- **Buy on Afternic** — primary, the only `--signal` fill on the page.
+- **Buy on Sedo** — `--ink` outline.
+- **Make an offer** — `--ink` outline, `mailto:info@noustelos.gr`.
+
+Both marketplace links open in a new tab (`target="_blank" rel="noopener"`).
+Bottom-left credit → https://noustelos.gr.
+
+**The price appears in three files** — the `.price` line in `index.html`,
+`llms.txt`, and this one. If a listing's price changes, change all three in
+the same commit, and never let the two listings disagree with each other.
 
 ## Accessibility
 
