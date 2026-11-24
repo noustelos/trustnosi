@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>trustno.si — Trust No .SI · Domain for sale</title>
+<meta name="description" content="trustno.si reads as Trust No .SI — a one-word brand for AI-safety, security or verification products in the Super Intelligence (.si) era. Available now.">
+<link rel="canonical" href="https://trustno.si/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0B0B0C">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="trustno.si">
+<meta property="og:url" content="https://trustno.si/">
+<meta property="og:title" content="trustno.si — Trust No .SI · Domain for sale">
+<meta property="og:description" content="trustno.si reads as Trust No .SI — a one-word brand for AI-safety, security or verification products in the Super Intelligence (.si) era. Available now.">
+<meta property="og:image" content="https://trustno.si/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TRUST NO .SI — trustno.si is for sale.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="trustno.si — Trust No .SI · Domain for sale">
+<meta name="twitter:description" content="trustno.si reads as Trust No .SI — a one-word brand for AI-safety, security or verification products in the Super Intelligence (.si) era. Available now.">
+<meta name="twitter:image" content="https://trustno.si/og-image.png">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230B0B0C'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%2300E5FF'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap">
+
+<script>
+/* JS smooths --p on every browser, so it claims the job before first paint:
+   otherwise the CSS scroll-timeline below gets a frame or two first and the
+   two fight over --p. Without JS that CSS timeline drives the scene instead. */
+document.documentElement.className = 'js-driven';
+</script>
+
+<style>
+/* Scroll mechanic adapted from "Type Takeover" by Matt Cannon (CodePen, MIT) */
+
+@property --p { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+/* Phase ramps. --t-* is raw local progress, --e-* is that smoothstepped, so
+   every phase leaves and arrives at zero velocity and the joins disappear.
+   Registered, so each resolves to a number once per frame instead of being
+   re-substituted as tokens into every property that reads it. */
+@property --t-intro { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-intro { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-split { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-split { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-cap   { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-cap   { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-capout{ syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-capout{ syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-slide { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-slide { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-take  { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-take  { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-wfade { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-wfade { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-rev   { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-rev   { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --t-cta   { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --e-cta   { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+:root{
+  --bg:#0B0B0C;
+  --ink:#EDEDE6;
+  --dim:#8A8A85;
+  --signal:#00E5FF;
+  --signal-hi:#33EBFF;
+  /* Text on the cyan fill. Off-white fails contrast on #00E5FF;
+     this is 11.8:1. */
+  --on-signal:#04191C;
+  --display:"Archivo Black","Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --text:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--text);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
+}
+
+a:focus-visible,button:focus-visible{
+  outline:2px solid var(--ink);
+  outline-offset:3px;
+  border-radius:2px;
+}
+
+/* ---------- scene ---------- */
+
+.scroll-scene{
+  height:450vh;
+  view-timeline-name:--scene;
+  view-timeline-axis:block;
+}
+
+.stage{
+  position:sticky;
+  top:0;
+  height:100svh;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+
+  animation:drive-p linear both;
+  animation-timeline:--scene;
+  animation-range:contain;
+
+  /* Every movement on the page is one of these. The phases overlap on
+     purpose - each one is still finishing while the next starts, so nothing
+     ever hands over at a single point. */
+  --t-intro: clamp(0, var(--p) / 0.14, 1);
+  --t-split: clamp(0, (var(--p) - 0.10) / 0.30, 1);
+  --t-cap:   clamp(0, (var(--p) - 0.14) / 0.12, 1);
+  --t-capout:clamp(0, (var(--p) - 0.28) / 0.12, 1);
+  --t-slide: clamp(0, (var(--p) - 0.32) / 0.14, 1);
+  --t-take:  clamp(0, (var(--p) - 0.36) / 0.42, 1);
+  --t-wfade: clamp(0, (var(--p) - 0.54) / 0.22, 1);
+  --t-rev:   clamp(0, (var(--p) - 0.70) / 0.30, 1);
+  --t-cta:   clamp(0, (var(--p) - 0.80) / 0.20, 1);
+
+  /* smoothstep: t * t * (3 - 2t) */
+  --e-intro: calc(var(--t-intro) * var(--t-intro) * (3 - 2 * var(--t-intro)));
+  --e-split: calc(var(--t-split) * var(--t-split) * (3 - 2 * var(--t-split)));
+  --e-cap:   calc(var(--t-cap)   * var(--t-cap)   * (3 - 2 * var(--t-cap)));
+  --e-capout:calc(var(--t-capout)* var(--t-capout)* (3 - 2 * var(--t-capout)));
+  --e-slide: calc(var(--t-slide) * var(--t-slide) * (3 - 2 * var(--t-slide)));
+  --e-take:  calc(var(--t-take)  * var(--t-take)  * (3 - 2 * var(--t-take)));
+  --e-wfade: calc(var(--t-wfade) * var(--t-wfade) * (3 - 2 * var(--t-wfade)));
+  --e-rev:   calc(var(--t-rev)   * var(--t-rev)   * (3 - 2 * var(--t-rev)));
+  --e-cta:   calc(var(--t-cta)   * var(--t-cta)   * (3 - 2 * var(--t-cta)));
+
+  /* How far the outer two words travel. Left unregistered on purpose: it
+     must stay a token so its em resolves against the big word's font-size,
+     not the stage's. */
+  --split-gap: calc(var(--e-split) * 0.26em);
+}
+
+@keyframes drive-p{ from{ --p:0 } to{ --p:1 } }
+
+/* JS is driving: drop the CSS animations, which would otherwise beat the
+   inline --p in the cascade (and, with no timeline support, snap it to 1). */
+.js-driven .stage,
+.js-driven .reveal{ animation:none }
+
+/* Hints only while the scene is actually moving - a permanent will-change
+   keeps the layers alive for the whole visit. */
+.stage.moving .word,
+.stage.moving .word > span{ will-change:transform }
+.stage.moving .word{ will-change:transform,opacity }
+
+/* ---------- chrome ---------- */
+
+.label{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--dim);
+  margin:0;
+}
+
+.bar{
+  position:absolute;
+  left:0;right:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  padding:22px clamp(16px,4vw,40px);
+  z-index:3;
+}
+.bar-top{top:0}
+.bar-bottom{bottom:0;align-items:flex-end}
+
+.wordmark{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.bar-left{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+
+.hint{opacity:calc(1 - var(--e-intro))}
+
+.credit{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--dim);
+  text-decoration:none;
+}
+.credit:hover{color:var(--ink)}
+
+.totop{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--dim);
+  background:none;
+  border:0;
+  padding:4px;
+  margin:-4px;
+  cursor:pointer;
+}
+.totop:hover{color:var(--ink)}
+
+.progress{
+  position:absolute;
+  left:0;bottom:0;
+  width:100%;
+  height:4px;
+  background:var(--ink);
+  transform:scaleX(var(--p));
+  transform-origin:0 50%;
+  z-index:4;
+}
+
+/* ---------- layers ---------- */
+
+.layer{
+  grid-area:1/1;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.intro{
+  position:absolute;
+  top:clamp(92px,14vh,150px);
+  left:clamp(16px,4vw,40px);
+  right:clamp(16px,4vw,40px);
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:14px;
+  width:auto;
+  opacity:calc(1 - var(--e-intro));
+  z-index:2;
+}
+.intro h2{
+  font-family:var(--display);
+  font-weight:400;
+  letter-spacing:-0.045em;
+  font-size:clamp(26px,4.4vw,52px);
+  line-height:0.98;
+  margin:0;
+  max-width:16ch;
+}
+
+/* the word */
+.word-wrap{
+  grid-area:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  z-index:1;
+}
+.word{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:0;
+  white-space:nowrap;
+  font-family:var(--display);
+  font-weight:400;
+  font-size:clamp(32px,16vw,300px);
+  line-height:1;
+  letter-spacing:-0.06em;
+  /* Slide so the ".si" sits dead centre, then blow the word up around it.
+     The box never changes size - the split is the two outer spans moving -
+     so nothing here costs a reflow. */
+  transform:
+    translateX(calc(var(--e-slide) * (var(--si-half,0.46em) - var(--split-gap) - 50%)))
+    scale(calc(1 + 13 * var(--e-take) * var(--e-take)));
+  transform-origin:calc(100% - var(--si-half,0.46em) + var(--split-gap)) 50%;
+  opacity:calc(1 - var(--e-wfade));
+}
+/* The split: "trust" goes left, ".si" goes right, "no" holds the centre. */
+.word > span:first-child{ transform:translateX(calc(-1 * var(--split-gap))) }
+.word > span.si{ transform:translateX(var(--split-gap)) }
+.word .si,
+.reveal h2 .si{color:var(--signal)}
+
+.caption{
+  grid-area:1/1;
+  align-self:center;
+  margin-top:clamp(86px,17vw,300px);
+  opacity:calc(var(--e-cap) - var(--e-capout));
+  z-index:2;
+}
+
+/* reveal */
+.reveal{
+  grid-area:1/1;
+  gap:20px;
+  padding:0 clamp(16px,5vw,40px);
+  text-align:center;
+  opacity:var(--e-rev);
+  transform:translateY(calc((1 - var(--e-rev)) * 18px));
+  z-index:2;
+
+  animation:reveal-gate steps(1,end) both;
+  animation-timeline:--scene;
+  animation-range:contain;
+}
+/* No-JS gate: keeps the reveal out of the hit-testing (and the CTAs
+   unclickable) until it is actually on screen. pointer-events inherits, so
+   the buttons follow. The JS path sets the same two values inline. */
+@keyframes reveal-gate{
+  0%{visibility:hidden;pointer-events:none}
+  69%{visibility:hidden;pointer-events:none}
+  70%{visibility:visible;pointer-events:none}
+  87%{visibility:visible;pointer-events:none}
+  88%{visibility:visible;pointer-events:auto}
+  100%{visibility:visible;pointer-events:auto}
+}
+.reveal h2{
+  font-family:var(--display);
+  font-weight:400;
+  letter-spacing:-0.06em;
+  font-size:clamp(40px,11vw,156px);
+  line-height:0.95;
+  margin:0;
+}
+.reveal p{
+  font-size:clamp(16px,2.2vw,20px);
+  line-height:1.5;
+  color:var(--ink);
+  margin:0;
+  max-width:28ch;
+}
+
+.offer{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  margin-top:6px;
+  width:100%;
+  opacity:var(--e-cta);
+  transform:translateY(calc((1 - var(--e-cta)) * 12px));
+}
+.reveal .price{color:var(--dim);font-size:11px;line-height:1.4;max-width:none}
+.cta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+}
+.reveal .note{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:1px;
+  color:var(--dim);
+  margin:0;
+  max-width:100%;
+}
+.btn{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  text-decoration:none;
+  padding:15px 22px;
+  border:1px solid transparent;
+  display:inline-block;
+}
+.btn-primary{background:var(--signal);color:var(--on-signal)}
+.btn-primary:hover{background:var(--signal-hi);color:var(--on-signal)}
+.btn-ghost{border-color:var(--ink);color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bg)}
+
+/* ---------- mobile ---------- */
+
+@media (max-width:600px){
+  .bar-top .label{display:none}
+  .intro h2{max-width:12ch}
+  .cta{flex-direction:column;align-items:stretch;width:100%;max-width:320px}
+  .reveal .note{font-size:10px}
+  .btn{text-align:center}
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion:reduce){
+  .scroll-scene{height:100svh;view-timeline-name:none}
+  .stage{--p:1;animation:none}
+  .reveal{animation:none;visibility:visible;opacity:1;transform:none}
+  .offer{opacity:1;transform:none}
+  .intro,.word-wrap,.caption{display:none}
+  .progress{display:none}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<h1 class="sr-only">trustno.si — Trust No .SI. Domain for sale.</h1>
+
+<div class="scroll-scene">
+  <section class="stage" aria-label="trustno.si, read two ways">
+
+    <div class="bar bar-top">
+      <span class="wordmark">TRUSTNO.SI</span>
+      <p class="label">FOR SALE</p>
+    </div>
+
+    <div class="word-wrap" aria-hidden="true">
+      <div class="word">
+        <span>trust</span><span>no</span><span class="si">.si</span>
+      </div>
+    </div>
+
+    <div class="layer intro" aria-hidden="true">
+      <p class="label">DOMAIN FOR SALE · .SI = SUPER INTELLIGENCE</p>
+      <h2>One name. Two readings.</h2>
+    </div>
+
+    <div class="layer caption" aria-hidden="true">
+      <p class="label">trust · no · SI</p>
+    </div>
+
+    <div class="layer reveal">
+      <h2 aria-hidden="true">TRUST NO <span class="si">.SI</span></h2>
+      <p>A name for whoever builds the safeguards.</p>
+      <div class="offer">
+        <p class="label price">BUY NOW · $1,490</p>
+        <div class="cta">
+          <a class="btn btn-primary" id="buy-afternic" href="https://www.afternic.com/domain/trustno.si" target="_blank" rel="noopener">Buy on Afternic</a>
+          <a class="btn btn-ghost" id="buy-sedo" href="https://sedo.com/search/details/?domain=trustno.si" target="_blank" rel="noopener">Buy on Sedo</a>
+          <a class="btn btn-ghost" href="mailto:info@noustelos.gr?subject=trustno.si%20%E2%80%94%20offer">Make an offer</a>
+        </div>
+        <p class="note">Secure checkout &amp; escrow handled by the marketplace.</p>
+      </div>
+    </div>
+
+    <div class="bar bar-bottom">
+      <div class="bar-left">
+        <p class="label hint">SCROLL ↓</p>
+        <a class="credit" href="https://noustelos.gr">Noustelos Studio</a>
+      </div>
+      <button class="totop" type="button" id="totop">Back to top ↗</button>
+    </div>
+
+    <div class="progress" aria-hidden="true"></div>
+
+  </section>
+</div>
+
+<script>
+/* The two live marketplace listings. Both are Buy Now at $1,490 USD;
+   the price shown on the page must match them. The anchors carry these
+   URLs in the markup too, so the page works without JS. */
+const AFTERNIC_URL = "https://www.afternic.com/domain/trustno.si";
+const SEDO_URL     = "https://sedo.com/search/details/?domain=trustno.si";
+
+(function () {
+  var scene = document.querySelector('.scroll-scene');
+  var stage = document.querySelector('.stage');
+  var word  = document.querySelector('.word');
+  var si    = document.querySelector('.si');
+  var reveal= document.querySelector('.reveal');
+
+  document.getElementById('buy-afternic').href = AFTERNIC_URL;
+  document.getElementById('buy-sedo').href = SEDO_URL;
+
+  document.getElementById('totop').addEventListener('click', function () {
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  });
+
+  /* put the takeover's vanishing point on the centre of ".si".
+     Stored in em, measured off the current scale, so it survives
+     the gaps opening and any resize. */
+  function origin() {
+    var cs = getComputedStyle(word);
+    var fs = parseFloat(cs.fontSize);
+    var k = 1;
+    if (cs.transform && cs.transform !== 'none' && window.DOMMatrixReadOnly) {
+      k = new DOMMatrixReadOnly(cs.transform).a || 1;
+    }
+    var w = si.getBoundingClientRect().width / k;
+    if (fs > 0 && w > 0) word.style.setProperty('--si-half', (w / 2 / fs) + 'em');
+  }
+  origin();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(origin);
+
+  /* Reduced motion: the stylesheet pins --p to 1 and shows the reveal.
+     Leave it alone - an inline --p here would override that. */
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  /* ---- smoothed progress ----------------------------------------------
+     A wheel notch moves the page in one discrete jump, and a scene wired
+     straight to scroll position jumps with it. So --p chases the scroll
+     instead of tracking it: each frame it closes a tenth of the remaining
+     distance, which turns those steps into a glide and costs nothing at
+     rest. The loop parks itself once it has caught up. */
+  var SMOOTHING = 0.10;   /* fraction of the gap closed per frame at 60fps */
+  var SETTLED   = 0.0005; /* close enough to snap and stop */
+
+  var current = 0, raf = 0, last = 0, moving = null;
+
+  function target() {
+    var top = scene.getBoundingClientRect().top + window.scrollY;
+    var span = scene.offsetHeight - window.innerHeight;
+    var v = span > 0 ? (window.scrollY - top) / span : 1;
+    return v < 0 ? 0 : v > 1 ? 1 : v;
+  }
+
+  function apply(v) {
+    stage.style.setProperty('--p', v.toFixed(4));
+    reveal.style.visibility = v > 0.70 ? 'visible' : 'hidden';
+    reveal.style.pointerEvents = v > 0.88 ? 'auto' : 'none';
+    var active = v > 0.0005 && v < 0.9995;
+    if (active !== moving) {
+      moving = active;
+      stage.classList.toggle('moving', active);
+    }
+  }
+
+  function frame(now) {
+    var dt = last ? Math.min(now - last, 100) : 1000 / 60;
+    last = now;
+    var to = target();
+    /* Same curve as current += (to - current) * 0.10, but measured in time
+       rather than in frames, so a 120Hz display does not glide twice as
+       fast as a 60Hz one. */
+    current += (to - current) * (1 - Math.pow(1 - SMOOTHING, dt / (1000 / 60)));
+    if (Math.abs(to - current) < SETTLED) {
+      current = to;
+      apply(current);
+      raf = 0; last = 0;
+      return;
+    }
+    apply(current);
+    raf = requestAnimationFrame(frame);
+  }
+
+  function kick() {
+    if (!raf) { last = 0; raf = requestAnimationFrame(frame); }
+  }
+
+  current = target();      /* no glide on load, wherever the page opens */
+  apply(current);
+  addEventListener('scroll', kick, { passive: true });
+  addEventListener('resize', kick, { passive: true });
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "trustno.si",
+  "url": "https://trustno.si/",
+  "description": "trustno.si reads as Trust No .SI — a one-word brand for AI-safety, security or verification products in the Super Intelligence (.si) era. The domain is for sale."
+}
+</script>
+
+</body>
+</html>
