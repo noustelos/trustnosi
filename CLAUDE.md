@@ -114,8 +114,15 @@ stage's.
 
 Nothing in the scene touches layout. The split is the two outer spans
 translating, not a `gap` or `letter-spacing` animation, so the word's box never
-changes size — transforms and opacity only. `will-change` is applied through
-`.stage.moving`, which JS toggles only while `0 < --p < 1`.
+changes size — transforms and opacity only. `will-change: transform` sits
+permanently on `.word` and its three spans (`opacity` too on `.word`), and
+must stay that way. It used to be toggled through a `.stage.moving` class
+while `0 < --p < 1`; that was a bug. `will-change` promotes an element to a
+compositor layer, and a layer created part-way through the scene is
+rasterised against whatever transform it is wearing at that moment — so the
+same `--p` rendered differently depending on which direction you had arrived
+from (8.4% of the viewport at `--p` 0.65, every letterform edge off by a
+subpixel below that). Three layers held for the visit is the cheaper trade.
 
 `--si-half` is measured in JS as half the width of `.si` in `em`, so the
 takeover's vanishing point lands on `.si` and stays there as the split opens
@@ -252,3 +259,10 @@ Worth re-measuring after any change to the scene:
   be no frame over 50ms.
 - **The no-JS path.** `Emulation.setScriptExecutionDisabled` — `--p` must
   still track scroll off the CSS timeline.
+- **Direction symmetry.** Every visual on the stage is a pure function of
+  `--p`: the same `--p` must give the same frame whatever the scroll
+  direction or history. Reach one scroll position twice — once wheeling down
+  from the top, once wheeling up from the bottom — let `--p` settle to the
+  same value both times, and screenshot. The two images must be pixel
+  identical. This is what catches compositor-raster bugs, which the `--p`
+  numbers alone look fine through.

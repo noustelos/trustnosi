@@ -157,11 +157,16 @@ a:focus-visible,button:focus-visible{
 .js-driven .stage,
 .js-driven .reveal{ animation:none }
 
-/* Hints only while the scene is actually moving - a permanent will-change
-   keeps the layers alive for the whole visit. */
-.stage.moving .word,
-.stage.moving .word > span{ will-change:transform }
-.stage.moving .word{ will-change:transform,opacity }
+/* Permanent, never toggled. will-change promotes these to compositor
+   layers, and a layer created mid-scene is rasterised against whatever
+   transform it happens to be wearing at that moment - so flipping the hint
+   part-way through made the same --p render differently depending on which
+   direction you arrived from (measured: 8.4% of the viewport at --p 0.65,
+   and every letterform edge off by a subpixel lower down). Three elements
+   held for the visit is the cheaper trade. */
+.word,
+.word > span{ will-change:transform }
+.word{ will-change:transform,opacity }
 
 /* ---------- chrome ---------- */
 
@@ -518,7 +523,7 @@ const SEDO_URL     = "https://sedo.com/search/details/?domain=trustno.si";
   var SMOOTHING = 0.10;   /* fraction of the gap closed per frame at 60fps */
   var SETTLED   = 0.0005; /* close enough to snap and stop */
 
-  var current = 0, raf = 0, last = 0, moving = null;
+  var current = 0, raf = 0, last = 0;
 
   function target() {
     var top = scene.getBoundingClientRect().top + window.scrollY;
@@ -531,11 +536,6 @@ const SEDO_URL     = "https://sedo.com/search/details/?domain=trustno.si";
     stage.style.setProperty('--p', v.toFixed(4));
     reveal.style.visibility = v > 0.70 ? 'visible' : 'hidden';
     reveal.style.pointerEvents = v > 0.88 ? 'auto' : 'none';
-    var active = v > 0.0005 && v < 0.9995;
-    if (active !== moving) {
-      moving = active;
-      stage.classList.toggle('moving', active);
-    }
   }
 
   function frame(now) {
