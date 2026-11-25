@@ -62,6 +62,15 @@ three files that carry it.
 **Contact** — `info@noustelos.gr`, and only that. Never an `@trustno.si`
 address: that is the domain being sold, and a buyer may take it over.
 
+> ⚠️ **Cloudflare Email Address Obfuscation is OFF for this zone on purpose —
+> the Offer CTA must work without JS. Don't re-enable.** Scrape Shield rewrites
+> `mailto:` links to `/cdn-cgi/l/email-protection#…` and relies on an injected
+> script to decode them, which leaves the Offer CTA dead for anyone without JS
+> and keeps the address out of the served HTML entirely. Every anchor on the
+> page carries a real `href` so the page works without JS; this is the one CTA
+> that is ours rather than a marketplace's. Verify with `curl -s https://trustno.si/ |
+> grep -o 'mailto:[^"]*'` — it must return a plain `mailto:`.
+
 **Rollback** — either revert the commit and push, or Cloudflare dashboard →
 Pages → `trustnosi` → Deployments → roll back to a previous deployment. The
 dashboard route is faster when the live site is broken; the revert is the one
